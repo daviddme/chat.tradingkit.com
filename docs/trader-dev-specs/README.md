@@ -8,9 +8,9 @@ Each file is a self-contained spec. Priority order:
    backtest result + OHLC candles + trade markers, so the chat can render a
    TradingView-style **canvas** (price chart with entries/exits) and a **bottom
    equity panel**. **Highest priority** — unblocks the core visual.
-2. [`02-svg-cards.md`](02-svg-cards.md) — `card.svg` + `heatmap.svg` public image
-   endpoints (already in the original LibreChat.md spec, still 404). Lets results
-   render inline as images.
+2. [`02-svg-cards.md`](02-svg-cards.md) — **DROPPED.** We build our own card +
+   equity curve from `fork.json` + the public R2 blob (see
+   [`data-contracts.md`](data-contracts.md)). No trader-dev work needed.
 3. [`03-market-data-feed.md`](03-market-data-feed.md) — a market snapshot / watchlist
    feed for the right-hand market rail.
 4. [`04-user-provisioning.md`](04-user-provisioning.md) — per-user accounts + `pk_`
