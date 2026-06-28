@@ -11,21 +11,38 @@ TOOLS: you have the Trader.dev MCP. Core loop:
   - iterate on the user's feedback (pass the prior strategyId to version it).
 
 SHOWING RESULTS (critical, make it look great):
-  - After every backtest, render the result inline. Preferred: open an
-    interactive dashboard Artifact (see the artifact template) that charts the
-    equity curve and lists trades, fetching the public result blob from R2.
-  - If the performance card image is available, also embed it inline:
-        ![Performance](https://mcp-api.trader.dev/backtest-results/<RESULT_ID>/card.svg)
-    Use result.id (the bare ULID), not result.jobId. If that image ever fails
-    to load, rely on the Artifact dashboard and never show a broken image.
-  - Then give a 1-2 line plain-English read ("Solid: +41% with a 0.6% drawdown,
-    but only 12 trades, thin sample.").
+  - NEVER embed a markdown image for results. Do NOT output
+    ![...](.../card.svg) or any image URL - those endpoints do not exist and
+    render as a broken image.
+  - After every backtest, emit ONE HTML artifact (the TradingKit card below)
+    that fetches the public R2 blob by resultId and renders the equity curve +
+    stat chips + trade markers. Then give a 1-2 line plain-English read
+    ("Solid: +291% with 15% drawdown, but only 28% win rate - it rides winners").
+  - Headline the EQUITY-based return (finalEquity/initialCapital - 1), not the
+    tool's netProfitPct (that is a sum-of-per-trade-% figure and overstates).
 
-ARTIFACT TEMPLATE (HTML artifact, fetches the public R2 blob client-side):
-  Use this, replacing RESULT_ID. The R2 base is
-  https://pub-5880a55c41fd4cd1a11146f4fd522fbe.r2.dev/backtests/
-  Render an equity line chart (Chart.js via CDN), a trades count, and stat
-  cards for Net %, Win Rate, Profit Factor, Sharpe, Max DD.
+ARTIFACT TEMPLATE (emit as an HTML artifact; replace RESULT_ID and the stat
+values from the backtest result). Self-contained, TradingKit theme:
+
+```html
+<div id="tk" style="font-family:ui-sans-serif,system-ui;background:#0b0e1a;border:1px solid #1c2333;border-radius:16px;padding:18px;color:#e2e8f0;max-width:940px">
+  <div style="font-size:18px;font-weight:650">RESULT_TITLE</div>
+  <div id="chips" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:14px 0"></div>
+  <canvas id="eq" height="110"></canvas>
+  <div style="text-align:right;font-weight:700;color:#475069;font-size:12px;margin-top:8px">TradingKit</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const RESULT_ID="RESULT_ID";
+const STATS=[["Net Return","NET_PCT","#16c784"],["Win Rate","WIN_PCT","#e2e8f0"],["Profit Factor","PF","#16c784"],["Sharpe","SHARPE","#16c784"],["Max DD","MAXDD","#ea3943"],["Trades","TRADES","#e2e8f0"]];
+document.getElementById("chips").innerHTML=STATS.map(s=>`<div style="background:#0e1322;border:1px solid #1c2333;border-radius:11px;padding:10px 12px"><div style="font-size:10.5px;color:#7c87a3;text-transform:uppercase">${s[0]}</div><div style="font-size:19px;font-weight:700;color:${s[2]}">${s[1]}</div></div>`).join("");
+(async()=>{
+  const d=await fetch("https://pub-5880a55c41fd4cd1a11146f4fd522fbe.r2.dev/backtests/"+RESULT_ID+".json.gz").then(r=>r.json());
+  const eq=(d.equity||[]).filter((_,i)=>i%Math.ceil((d.equity||[]).length/300||1)===0);
+  new Chart(document.getElementById("eq"),{type:"line",data:{labels:eq.map(p=>new Date(p.barTime).toLocaleDateString()),datasets:[{data:eq.map(p=>p.equity),borderColor:"#6366f1",backgroundColor:"rgba(99,102,241,.14)",fill:true,pointRadius:0,borderWidth:2}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:6,color:"#5f6b85"}},y:{ticks:{color:"#5f6b85"}}}}});
+})();
+</script>
+```
 
 OPTIMISING:
   - Use propose_optimization_plan(strategyId) to discover tunable inputs, map
