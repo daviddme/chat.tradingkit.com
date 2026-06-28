@@ -22,15 +22,17 @@ LibreChat image + our `librechat.yaml` via `CONFIG_PATH`).
 - Fixed template showstoppers: `CREDS_KEY/IV` (blocked key saves), ban guard
   (locked out admin) - both resolved.
 
-## Blocked
+## Working — backtests end-to-end (2026-06-28)
 
-- **Backtests in chat.** Root cause: LibreChat's MCP client does not send the
-  auth key on the SSE GET (session-open), so the Trader.dev server treats the
-  session as anonymous -> "No key found" on tool calls. The key is valid (proven
-  via a direct MCP SDK client: `whoami` -> `__admin__`). **Fix chosen:** trader-dev
-  adds `?key=` query-param auth (see `docs/trader-dev-specs/06-mcp-auth-for-librechat.md`),
-  then our MCP `url` becomes `https://mcp.trader.dev/sse?key=${TRADERDEV_ADMIN_KEY}`.
-  Forward that spec to the trader-dev dev.
+trader-dev shipped the `?key=` SSE auth, so MCP is clean native SSE
+(`url: https://mcp.trader.dev/sse?key=${TRADERDEV_ADMIN_KEY}`). Verified live in
+chat: ask for a backtest -> agent writes Pine -> `quick_backtest` runs -> a
+TradingKit card renders with the real equity curve + colour-coded stat tiles
+(pulled from `result.r2Url`), and the agent headlines `equityReturnPct` (account
+growth). trader-dev also added the MCP-UI `ui://` card resource (renders in
+Claude/ChatGPT; LibreChat uses the agent's own artifact today), `r2Url`/`jsonUrl`/
+`viewUrl`/`equityReturnPct`/`finalEquity` on results, and a public
+`GET /backtest-results/<id>/result.json`. Kill-switch: `MCP_UI_CARDS=false`.
 
 ## Next (the TradingView-killer build, needs the fork)
 
