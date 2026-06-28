@@ -71,8 +71,10 @@ endpoints:
 
 # Pin the Strategy Lab agent as the default selectable spec so new chats land on
 # it. agent_id is filled in once the agent is seeded (Task 4 -> Task 5).
+# Admin-controlled models: users are restricted to the specs defined here
+# (enforce: true). Add a spec per model you want to offer.
 modelSpecs:
-  enforce: false
+  enforce: true
   prioritize: true
   list:
     - name: "strategy-lab"
@@ -82,3 +84,15 @@ modelSpecs:
       preset:
         endpoint: "agents"
         agent_id: "agent_zuy8JHo2MMLqSh4ZgtEgY"
+
+# Credit metering: every message debits a per-user token balance (input+output,
+# with per-model rates). This is the Free-tier engine; Pro / Pro Plus grants and
+# billing top-ups get wired via a webhook later (see docs/phase3-credits-tiers.md).
+# Generous starting + weekly refill for now so nobody is stranded pre-billing.
+balance:
+  enabled: true
+  startBalance: 2000000
+  autoRefillEnabled: true
+  refillIntervalValue: 7
+  refillIntervalUnit: "days"
+  refillAmount: 2000000
