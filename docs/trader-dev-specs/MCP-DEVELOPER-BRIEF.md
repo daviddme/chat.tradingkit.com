@@ -111,6 +111,30 @@ card is interactive everywhere.
 **Acceptance:** in an MCP-UI-capable client the card renders inline; in others the
 JSON result is intact and unchanged.
 
+### P2 refinement (CONFIRMED in production) — the card must report its height
+
+The `ui://` card already renders **inline** in LibreChat (v0.8.7, `@mcp-ui/client`).
+One fix needed: the iframe is stuck at the **default 150px and clips** (stat tiles
+cut off, equity sparkline hidden) because the card HTML does not tell the host its
+height. MCP-UI auto-resizes the iframe only when the embedded page reports its
+size. In the card's HTML, post the content height to the parent so it grows to
+fit, e.g.:
+
+```html
+<script>
+function reportSize(){
+  const h = document.documentElement.scrollHeight;
+  parent.postMessage({ type: 'ui-size-change', payload: { height: h } }, '*');
+}
+window.addEventListener('load', reportSize);
+new ResizeObserver(reportSize).observe(document.body);
+</script>
+```
+(Match the exact message shape `@mcp-ui/client` expects for size changes — the
+`ui-size-change` / size-change event — so the iframe resizes to the full card.)
+Target a card around **360–420px tall** so the header, the 6 stat tiles, and the
+equity sparkline are all visible without scrolling.
+
 ---
 
 ## Priority 3 — make results self-describing + fix the `.json` 404
