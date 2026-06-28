@@ -24,15 +24,22 @@ interface:
 # ---------------------------------------------------------------------------
 mcpServers:
   trader-dev:
-    # Native SSE, installed GLOBALLY for all users with the admin key (via the
-    # ${TRADERDEV_ADMIN_KEY} env var, substituted into the header). A direct MCP
-    # SSE client with this header authenticates tool calls (whoami -> __admin__),
-    # so no per-user key and no mcp-remote bridge are needed.
-    type: sse
-    url: "https://mcp.trader.dev/sse"
-    headers:
-      Authorization: "Bearer ${TRADERDEV_ADMIN_KEY}"
-    initTimeout: 60000
+    # GLOBAL install via the admin key. LibreChat's native SSE client does not
+    # set the auth header on the SSE GET (session-open), so the Trader.dev server
+    # treats the session as anonymous -> "No key found" on tool calls. mcp-remote
+    # forces clean SSE (sse-only, skipping the streamable-http negotiation that
+    # 404s) and sets auth on the GET. Key is injected via ${TRADERDEV_ADMIN_KEY}.
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "mcp-remote@0.1.38"
+      - "https://mcp.trader.dev/sse"
+      - "--transport"
+      - "sse-only"
+      - "--header"
+      - "Authorization:Bearer ${TRADERDEV_ADMIN_KEY}"
+    initTimeout: 120000
     timeout: 180000
     serverInstructions: |
       You help users backtest trading strategies in plain English via the
