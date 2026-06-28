@@ -24,12 +24,19 @@ interface:
 # ---------------------------------------------------------------------------
 mcpServers:
   trader-dev:
-    # GLOBAL install via the admin key. Trader.dev's P1 fix accepts the key as a
-    # query param on the SSE GET, which authenticates the whole session for
-    # native SSE clients (the GET is what LibreChat controls). Clean: no header,
-    # no customUserVars, no mcp-remote bridge. ${TRADERDEV_ADMIN_KEY} is the env.
+    # PER-USER. On login (Clerk or native) the backend auto-provisions each user a
+    # personal Trader.dev account and stores their pk_ as the TRADERDEV_KEY
+    # customUserVar (PluginAuth mcp_trader-dev/TRADERDEV_KEY); the owner account
+    # (hi@davidd.tech) gets the unlimited admin key instead. LibreChat substitutes
+    # it into {{TRADERDEV_KEY}} per user, so every user's backtests AND live alerts
+    # run as their own Trader.dev account.
     type: sse
-    url: "https://mcp.trader.dev/sse?key=${TRADERDEV_ADMIN_KEY}"
+    url: "https://mcp.trader.dev/sse?key={{TRADERDEV_KEY}}"
+    customUserVars:
+      TRADERDEV_KEY:
+        title: "Trader.dev API Key"
+        description: "Automatically provisioned for your account on sign-in."
+        sensitive: true
     initTimeout: 60000
     timeout: 180000
     serverInstructions: |
@@ -75,6 +82,30 @@ modelSpecs:
       preset:
         endpoint: "agents"
         agent_id: "agent_zuy8JHo2MMLqSh4ZgtEgY"
+    - name: "daviddtech"
+      label: "DaviddTech"
+      description: "NNFX-style systematic strategy building, backtesting and forward testing."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_j7Egqg-gs5s_5_RGgnkC1"
+    - name: "vlad"
+      label: "Vlad — Scalper"
+      description: "15m scalper: fast momentum entries, tight risk, high tempo."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_vz18JWbRztIEWR-mwDxkw"
+    - name: "the-teacher"
+      label: "Uli — The Teacher"
+      description: "Engineer-mathematician: entropy, mean reversion and statistics, taught clearly."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_D4QinM9Kd-aY_Uv3BYP9z"
+    - name: "fishyink"
+      label: "FishyInk — Portfolio"
+      description: "Portfolio management: allocation, correlation, risk parity, drawdown control."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_ZteFcqVwbm6jpldwUklPz"
 
 # Credit metering: every message debits a per-user token balance (input+output,
 # with per-model rates). This is the Free-tier engine; Pro / Pro Plus grants and
