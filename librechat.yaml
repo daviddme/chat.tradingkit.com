@@ -24,19 +24,15 @@ interface:
 # ---------------------------------------------------------------------------
 mcpServers:
   trader-dev:
-    # mcp-remote stdio bridge (mirrors the working Claude Code config). Native
-    # SSE enumerated tools but did NOT authenticate tool calls against this
-    # server ("No key found"); mcp-remote forwards the Bearer on every request.
-    # npx fetches mcp-remote on first use, so we stay on the official image.
-    type: stdio
-    command: npx
-    args:
-      - "-y"
-      - "mcp-remote@0.1.38"
-      - "https://mcp.trader.dev/sse"
-      - "--header"
-      - "Authorization:Bearer ${TRADERDEV_ADMIN_KEY}"
-    initTimeout: 120000
+    # Native SSE, installed GLOBALLY for all users with the admin key (via the
+    # ${TRADERDEV_ADMIN_KEY} env var, substituted into the header). A direct MCP
+    # SSE client with this header authenticates tool calls (whoami -> __admin__),
+    # so no per-user key and no mcp-remote bridge are needed.
+    type: sse
+    url: "https://mcp.trader.dev/sse"
+    headers:
+      Authorization: "Bearer ${TRADERDEV_ADMIN_KEY}"
+    initTimeout: 60000
     timeout: 180000
     serverInstructions: |
       You help users backtest trading strategies in plain English via the
