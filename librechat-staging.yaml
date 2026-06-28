@@ -1,0 +1,96 @@
+# Trader.dev Strategy Lab - LibreChat config
+# Loaded by the Railway LibreChat service via CONFIG_PATH (raw GitHub URL).
+# Schema version matches the running image (verified against upstream 2026-06-28).
+# Edit -> push to main -> redeploy the LibreChat service on Railway.
+#
+# No secrets live in this file: provider keys are Railway env; the Trader.dev
+# key is supplied per-user via customUserVars (TRADERDEV_API_KEY).
+
+version: 1.3.11
+cache: true
+
+interface:
+  customWelcome: "Hi, welcome to TradingKit. Describe a trading idea in plain English and I'll build it, backtest it, and chart the results."
+
+# ---------------------------------------------------------------------------
+# Trader.dev MCP server.
+#
+# Native SSE transport: LibreChat connects directly to the MCP SSE endpoint and
+# forwards a static per-user Bearer token. This is the same connection the
+# Claude Code `trader-dev` client makes; Claude wraps it in `mcp-remote` only
+# because Claude needs a stdio<->remote bridge, which LibreChat does not.
+# A ready-to-flip mcp-remote stdio fallback lives in Dockerfile +
+# docs/mcp-remote-fallback.md if the native path ever misbehaves.
+# ---------------------------------------------------------------------------
+mcpServers:
+  trader-dev:
+    # GLOBAL install via the admin key. Trader.dev's P1 fix accepts the key as a
+    # query param on the SSE GET, which authenticates the whole session for
+    # native SSE clients (the GET is what LibreChat controls). Clean: no header,
+    # no customUserVars, no mcp-remote bridge. ${TRADERDEV_ADMIN_KEY} is the env.
+    type: sse
+    url: "https://mcp.trader.dev/sse?key=${TRADERDEV_ADMIN_KEY}"
+    initTimeout: 60000
+    timeout: 180000
+    serverInstructions: |
+      You help users backtest trading strategies in plain English via the
+      Trader.dev tools. Translate the idea into a Pine v5 strategy, call
+      quick_backtest(pineSource, symbol, timeframe), then render the result
+      inline (an HTML artifact charting the equity curve from the public R2
+      blob; also embed the card.svg image if it loads). Give a 1-2 line
+      plain-English read. Pine rules for this engine: start with
+      strategy(..., default_qty_type=strategy.percent_of_equity,
+      commission_type=strategy.commission.percent, commission_value=0.06);
+      declare tunable inputs with minval/maxval/step; use reversal entries for
+      round trips; NEVER use strategy.exit(stop=, limit=) (it silently breaks
+      entries) - use opposite-signal exits or strategy.close. On 402/429 errors
+      relay the friendly message and upgradeUrl. Be concise, no hype.
+    chatMenu: true
+    startup: true
+
+endpoints:
+  agents:
+    recursionLimit: 25
+    maxRecursionLimit: 50
+    capabilities:
+      - "tools"
+      - "actions"
+      - "artifacts"
+      - "ocr"
+      - "chain"
+      - "file_search"
+
+# Pin the Strategy Lab agent as the default selectable spec so new chats land on
+# it. agent_id is filled in once the agent is seeded (Task 4 -> Task 5).
+# Admin-controlled models: users are restricted to the specs defined here
+# (enforce: true). Add a spec per model you want to offer.
+modelSpecs:
+  enforce: true
+  prioritize: true
+  list:
+    - name: "strategy-lab"
+      label: "TradingKit Lab"
+      default: true
+      description: "Backtest and optimise trading strategies in plain English."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_zuy8JHo2MMLqSh4ZgtEgY"
+
+# Credit metering: every message debits a per-user token balance (input+output,
+# with per-model rates). This is the Free-tier engine; Pro / Pro Plus grants and
+# billing top-ups get wired via a webhook later (see docs/phase3-credits-tiers.md).
+# Generous starting + weekly refill for now so nobody is stranded pre-billing.
+# Credit metering is OFF for now so nobody (esp. admin) is blocked during the
+# build phase. True "admin unlimited + users metered" needs a per-role exemption,
+# which we wire in the LibreChat fork (admins skip the balance check). When we
+# re-enable, these generous defaults apply to new users.
+balance:
+  # STAGING ONLY: metering ON to test the credit system. Admins + hi@davidd.tech
+  # are exempt (unlimited) via the fork. Modest start balance so a test user hits
+  # the out-of-credits block quickly. Prod keeps balance disabled until validated.
+  enabled: true
+  startBalance: 30000
+  autoRefillEnabled: true
+  refillIntervalValue: 7
+  refillIntervalUnit: "days"
+  refillAmount: 30000
