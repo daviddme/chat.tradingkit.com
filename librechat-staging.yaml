@@ -83,6 +83,30 @@ modelSpecs:
       preset:
         endpoint: "agents"
         agent_id: "agent_zuy8JHo2MMLqSh4ZgtEgY"
+    - name: "daviddtech"
+      label: "DaviddTech"
+      description: "NNFX-style systematic strategy building, backtesting and forward testing."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_j7Egqg-gs5s_5_RGgnkC1"
+    - name: "vlad"
+      label: "Vlad — Scalper"
+      description: "15m scalper: fast momentum entries, tight risk, high tempo."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_vz18JWbRztIEWR-mwDxkw"
+    - name: "the-teacher"
+      label: "Uli — The Teacher"
+      description: "Engineer-mathematician: entropy, mean reversion and statistics, taught clearly."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_D4QinM9Kd-aY_Uv3BYP9z"
+    - name: "fishyink"
+      label: "FishyInk — Portfolio"
+      description: "Portfolio management: allocation, correlation, risk parity, drawdown control."
+      preset:
+        endpoint: "agents"
+        agent_id: "agent_ZteFcqVwbm6jpldwUklPz"
 
 # Credit metering: every message debits a per-user token balance (input+output,
 # with per-model rates). This is the Free-tier engine; Pro / Pro Plus grants and
