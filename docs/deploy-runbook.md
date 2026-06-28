@@ -31,6 +31,13 @@ Use `scripts/set-railway-vars.sh` (idempotent), then redeploy.
 (prints `AGENT_ID`). If the agent_id changes, update `modelSpecs` in
 `librechat.yaml` and redeploy.
 
+The script also makes the agent **public to all users** via this build's ACL:
+`PUT /api/permissions/agent/<mongo _id>` with
+`{"public":true,"publicAccessRoleId":"agent_viewer"}` (view-and-use, no edit).
+This is required for a public app: without it, non-owner users get 403 on the
+agent. (Equivalent UI action: Agent Builder → select agent → Share → "Share with
+everyone".)
+
 ## Verify health
 
 ```

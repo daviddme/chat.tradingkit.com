@@ -1,0 +1,39 @@
+{
+  "name": "Trader.dev Strategy Lab",
+  "description": "Backtest and optimise trading strategies in plain English.",
+  "provider": "anthropic",
+  "model": "claude-sonnet-4-6",
+  "artifacts": "default",
+  "instructions_file": "docs/agent-system-prompt.md",
+  "conversation_starters": [
+    "Backtest an RSI mean-reversion on BTC 1h",
+    "Build an EMA crossover for ETH and show me the equity curve",
+    "Optimise my strategy's RSI length for the best Sharpe",
+    "Make this strategy trade less and improve the win rate"
+  ],
+  "mcp_server": "trader-dev",
+  "mcp_tools": [
+    "quick_backtest",
+    "run_backtest",
+    "get_backtest_result",
+    "get_trades",
+    "get_equity_curve",
+    "compare_backtests",
+    "create_strategy",
+    "update_strategy",
+    "fork_strategy",
+    "get_strategy",
+    "list_strategies",
+    "search_strategies",
+    "parse_strategy_inputs",
+    "propose_optimization_plan",
+    "start_optimization",
+    "get_optimization",
+    "list_optimizations",
+    "cancel_optimization",
+    "get_credits",
+    "buy_credits",
+    "search_perps",
+    "whoami"
+  ]
+}
