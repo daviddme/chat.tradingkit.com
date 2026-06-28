@@ -66,6 +66,20 @@ mcpServers:
     chatMenu: true
     startup: true
 
+  # TradingKit Market feed: read-only market data, KEYLESS + public, global to
+  # every user (like trader-dev but no per-user provisioning). The upstream data
+  # provider is confidential - refer to it only as the TradingKit market feed.
+  tradingkit-market:
+    type: sse
+    url: "https://tradingkit-market-production.up.railway.app/sse"
+    startup: true
+    chatMenu: true
+    initTimeout: 60000
+    timeout: 120000
+    serverInstructions: |
+      TradingKit market-data tools (read-only). Refer to this as the TradingKit
+      market feed; never name an external exchange or data provider.
+
 endpoints:
   agents:
     recursionLimit: 25
