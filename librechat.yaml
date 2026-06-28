@@ -24,12 +24,20 @@ interface:
 # ---------------------------------------------------------------------------
 mcpServers:
   trader-dev:
-    type: sse
-    url: "https://mcp.trader.dev/sse"
-    initTimeout: 60000
+    # mcp-remote stdio bridge (mirrors the working Claude Code config). Native
+    # SSE enumerated tools but did NOT authenticate tool calls against this
+    # server ("No key found"); mcp-remote forwards the Bearer on every request.
+    # npx fetches mcp-remote on first use, so we stay on the official image.
+    type: stdio
+    command: npx
+    args:
+      - "-y"
+      - "mcp-remote@0.1.38"
+      - "https://mcp.trader.dev/sse"
+      - "--header"
+      - "Authorization:Bearer {{TRADERDEV_API_KEY}}"
+    initTimeout: 120000
     timeout: 180000
-    headers:
-      Authorization: "Bearer {{TRADERDEV_API_KEY}}"
     customUserVars:
       TRADERDEV_API_KEY:
         title: "Trader.dev API Key"
