@@ -19,6 +19,9 @@ Each file is a self-contained spec. Priority order:
    admin key.
 5. [`05-rebacktest.md`](05-rebacktest.md) — the contract behind the "Re-backtest"
    button.
+6. [`07-mcp-ui-widget.md`](07-mcp-ui-widget.md) — return the backtest card as an
+   MCP-UI resource so it renders in Claude / ChatGPT / LibreChat from one
+   server-side build (answers "show the widget in Claude too").
 
 ## Current integration (context for the dev)
 
