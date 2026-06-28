@@ -1,0 +1,6 @@
+# Trader.dev Strategy Lab - LibreChat config
+# Loaded by the Railway LibreChat service via CONFIG_PATH (raw GitHub URL).
+# Schema version matches the running image (verified against upstream 2026-06-28).
+# Edit -> push to main -> redeploy the LibreChat service on Railway.
+version: 1.3.11
+cache: true
