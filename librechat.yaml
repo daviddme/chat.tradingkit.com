@@ -78,7 +78,7 @@ modelSpecs:
   prioritize: true
   list:
     - name: "strategy-lab"
-      label: "Trader.dev Strategy Lab"
+      label: "TradingKit Lab"
       default: true
       description: "Backtest and optimise trading strategies in plain English."
       preset:

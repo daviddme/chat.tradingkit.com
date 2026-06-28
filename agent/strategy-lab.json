@@ -1,5 +1,5 @@
 {
-  "name": "Trader.dev Strategy Lab",
+  "name": "TradingKit Lab",
   "description": "Backtest and optimise trading strategies in plain English.",
   "provider": "openAI",
   "model": "gpt-5.5",
