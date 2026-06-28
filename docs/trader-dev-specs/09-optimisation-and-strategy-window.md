@@ -95,6 +95,26 @@ Two delivery paths (the backend work is the same data you already have):
 So: backend delivers the data + the report card; the persistent dock is on the
 TradingKit side.
 
+### The exact "Open in Strategy Window" button action (TradingKit handles this)
+
+TradingKit's fork adds a docked bottom Strategy Window. The card button must post
+this action (a dedicated `intent`, so it opens the dock instead of messaging the
+agent):
+
+```js
+parent.postMessage({ type: 'intent', payload: {
+  intent: 'strategy-window',
+  params: {
+    url: '<viewUrl>',              // the full report page for this result/opt
+    title: '<symbol> <tf> backtest'  // dock tab title
+  }
+}}, '*');
+```
+TradingKit intercepts `intent === 'strategy-window'` and opens the bottom dock
+iframed to `params.url` (the existing report page). Any other `intent`/`tool`/
+`prompt` still goes to the agent as before. So just emit the button with that
+action; we handle the docking.
+
 ## Acceptance
 - `status.json` public + CORS; card shows a live progress bar and stops at done.
 - Optimisation card renders the heatmap grid + best params + apply button.
