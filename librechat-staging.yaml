@@ -24,12 +24,18 @@ interface:
 # ---------------------------------------------------------------------------
 mcpServers:
   trader-dev:
-    # GLOBAL install via the admin key. Trader.dev's P1 fix accepts the key as a
-    # query param on the SSE GET, which authenticates the whole session for
-    # native SSE clients (the GET is what LibreChat controls). Clean: no header,
-    # no customUserVars, no mcp-remote bridge. ${TRADERDEV_ADMIN_KEY} is the env.
+    # PER-USER install. On Clerk login the backend auto-provisions each user a
+    # personal Trader.dev account and stores their pk_ key as the TRADERDEV_KEY
+    # customUserVar (PluginAuth: mcp_trader-dev/TRADERDEV_KEY). LibreChat
+    # substitutes it into {{TRADERDEV_KEY}} when it opens that user's MCP
+    # session, so every user's backtests run as their own Trader.dev account.
     type: sse
-    url: "https://mcp.trader.dev/sse?key=${TRADERDEV_ADMIN_KEY}"
+    url: "https://mcp.trader.dev/sse?key={{TRADERDEV_KEY}}"
+    customUserVars:
+      TRADERDEV_KEY:
+        title: "Trader.dev API Key"
+        description: "Automatically provisioned for your account on sign-in."
+        sensitive: true
     initTimeout: 60000
     timeout: 180000
     serverInstructions: |
