@@ -9,8 +9,9 @@
 version: 1.3.11
 cache: true
 
-# Top-level: the short disclaimer shown in the footer below the chat input.
-customFooter: "Not financial advice. Trade at your own risk."
+# NOTE: customFooter is NOT a valid key in this schema (it crashes config
+# validation). The footer disclaimer text lives in the fork's Chat/Footer.tsx
+# fallback instead ("Not financial advice. Trade at your own risk.").
 
 interface:
   customWelcome: "Hi, welcome to TradingKit. Describe a trading idea in plain English and I'll build it, backtest it, and chart the results."
