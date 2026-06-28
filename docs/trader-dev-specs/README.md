@@ -25,6 +25,9 @@ Each file is a self-contained spec. Priority order:
 7. [`08-mcp-ui-cards.md`](08-mcp-ui-cards.md) — the interactive inline-card
    catalogue + the LibreChat action contract (how Re-backtest / Optimise buttons
    work) + the card height fix. **This is the active build for the chat UI.**
+8. [`09-optimisation-and-strategy-window.md`](09-optimisation-and-strategy-window.md)
+   — public optimisation status endpoint + the optimisation progress/heatmap
+   card + the bigger backtest card + the "Open in Strategy Window" full report.
 
 ## Current integration (context for the dev)
 
