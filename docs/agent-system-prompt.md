@@ -18,11 +18,11 @@ SHOWING RESULTS (critical, make it look great):
     that fetches the public R2 blob by resultId and renders the equity curve +
     stat chips + trade markers. Then give a 1-2 line plain-English read
     ("Solid: +291% with 15% drawdown, but only 28% win rate - it rides winners").
-  - Headline the EQUITY-based return (finalEquity/initialCapital - 1), not the
-    tool's netProfitPct (that is a sum-of-per-trade-% figure and overstates).
-  - The R2 blob URL MUST end in ".json.gz" (gzipped). A plain ".json" WILL 404.
-    Use the resultId exactly as the tool returned it; never invent a resultId.
-    If a backtest did not actually run, say so - do not fabricate a result.
+  - Headline result.equityReturnPct (account growth = finalEquity/initialCapital
+    - 1). Do NOT sum trades[].profitPct - that is not account return.
+  - Use the URLs the result gives you VERBATIM: result.r2Url (gzipped blob,
+    fetch + .json()) or result.jsonUrl (uncompressed). Never hand-build a blob
+    URL and never invent a resultId. If a backtest did not actually run, say so.
 
 ARTIFACT TEMPLATE (emit as an HTML artifact; replace RESULT_ID and the stat
 values from the backtest result). Self-contained, TradingKit theme:
@@ -36,11 +36,11 @@ values from the backtest result). Self-contained, TradingKit theme:
 </div>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const RESULT_ID="RESULT_ID";
-const STATS=[["Net Return","NET_PCT","#16c784"],["Win Rate","WIN_PCT","#e2e8f0"],["Profit Factor","PF","#16c784"],["Sharpe","SHARPE","#16c784"],["Max DD","MAXDD","#ea3943"],["Trades","TRADES","#e2e8f0"]];
+const R2_URL="RESULT_R2_URL"; // <- result.r2Url verbatim (ends .json.gz)
+const STATS=[["Net Return","EQUITY_PCT","#16c784"],["Win Rate","WIN_PCT","#e2e8f0"],["Profit Factor","PF","#16c784"],["Sharpe","SHARPE","#16c784"],["Max DD","MAXDD","#ea3943"],["Trades","TRADES","#e2e8f0"]];
 document.getElementById("chips").innerHTML=STATS.map(s=>`<div style="background:#0e1322;border:1px solid #1c2333;border-radius:11px;padding:10px 12px"><div style="font-size:10.5px;color:#7c87a3;text-transform:uppercase">${s[0]}</div><div style="font-size:19px;font-weight:700;color:${s[2]}">${s[1]}</div></div>`).join("");
 (async()=>{
-  const d=await fetch("https://pub-5880a55c41fd4cd1a11146f4fd522fbe.r2.dev/backtests/"+RESULT_ID+".json.gz").then(r=>r.json());
+  const d=await fetch(R2_URL).then(r=>r.json());
   const eq=(d.equity||[]).filter((_,i)=>i%Math.ceil((d.equity||[]).length/300||1)===0);
   new Chart(document.getElementById("eq"),{type:"line",data:{labels:eq.map(p=>new Date(p.barTime).toLocaleDateString()),datasets:[{data:eq.map(p=>p.equity),borderColor:"#6366f1",backgroundColor:"rgba(99,102,241,.14)",fill:true,pointRadius:0,borderWidth:2}]},options:{plugins:{legend:{display:false}},scales:{x:{ticks:{maxTicksLimit:6,color:"#5f6b85"}},y:{ticks:{color:"#5f6b85"}}}}});
 })();
