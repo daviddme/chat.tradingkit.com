@@ -35,13 +35,9 @@ mcpServers:
       - "mcp-remote@0.1.38"
       - "https://mcp.trader.dev/sse"
       - "--header"
-      - "Authorization:Bearer {{TRADERDEV_API_KEY}}"
+      - "Authorization:Bearer ${TRADERDEV_ADMIN_KEY}"
     initTimeout: 120000
     timeout: 180000
-    customUserVars:
-      TRADERDEV_API_KEY:
-        title: "Trader.dev API Key"
-        description: "<b>Temporary setup step.</b> Soon Trader.dev will generate and connect your key automatically. For now, paste it here manually. Get your pk_ key from <a href='https://mcp-api.trader.dev/login' target='_blank'>trader.dev API Keys</a>. It stays private to your account."
     serverInstructions: |
       You help users backtest trading strategies in plain English via the
       Trader.dev tools. Translate the idea into a Pine v5 strategy, call
@@ -56,7 +52,7 @@ mcpServers:
       entries) - use opposite-signal exits or strategy.close. On 402/429 errors
       relay the friendly message and upgradeUrl. Be concise, no hype.
     chatMenu: true
-    startup: false
+    startup: true
 
 endpoints:
   agents:
