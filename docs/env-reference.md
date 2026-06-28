@@ -22,6 +22,8 @@ rate-limit knobs); leave those as-is.
 | `ANTHROPIC_API_KEY` | Pays for inference (Phase 1; metered per-user in Phase 3). |
 | `ALLOW_REGISTRATION=true` | Open email registration (Phase 1 public). |
 | `CHECK_BALANCE` | **Deprecated.** Phase 3 uses the `balance:` block in `librechat.yaml` instead. |
+| `BAN_VIOLATIONS=false` | **Deliberately disabled.** The template default (`true` + `NON_BROWSER_VIOLATION_SCORE=20`) instant-bans real users/admin on minor triggers (repeated logins, non-browser API calls) for 2h. Too aggressive for a public app. Keep off, or re-enable only with much gentler thresholds. Rate limits (`LIMIT_MESSAGE_*`, `LOGIN_MAX`) still apply without banning. |
+| `NON_BROWSER_VIOLATION_SCORE=0` | Set to 0 so API/script access is not instant-banned. |
 
 ## Rollback
 
