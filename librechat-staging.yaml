@@ -11,6 +11,13 @@ cache: true
 
 interface:
   customWelcome: "Hi, welcome to TradingKit. Describe a trading idea in plain English and I'll build it, backtest it, and chart the results."
+  customFooter: "TradingKit - not financial advice; you trade at your own risk."
+  privacyPolicy:
+    externalUrl: "/privacy"
+    openNewTab: false
+  termsOfService:
+    externalUrl: "/terms"
+    openNewTab: false
 
 # ---------------------------------------------------------------------------
 # Trader.dev MCP server.
