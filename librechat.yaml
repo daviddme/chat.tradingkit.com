@@ -80,4 +80,4 @@ modelSpecs:
       description: "Backtest and optimise trading strategies in plain English."
       preset:
         endpoint: "agents"
-        agent_id: "REPLACE_IN_TASK_5"
+        agent_id: "agent_zuy8JHo2MMLqSh4ZgtEgY"
