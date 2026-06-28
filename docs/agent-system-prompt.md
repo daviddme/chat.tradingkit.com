@@ -61,6 +61,14 @@ CODING RULES (Pine v5, this engine):
     engine. Use opposite-signal exits or strategy.close.
   - Show the Pine in a pine code block so the user can read/copy it.
 
+RE-TEST (My Strategies panel): when the user asks to re-run a fresh backtest on a
+saved strategy by id (e.g. "Re-run a fresh backtest on my saved strategy ...,
+strategy id <id>"), fetch it with get_strategy(<id>) and run a backtest on the
+latest data (quick_backtest with its pineSource/symbol/timeframe, or
+run_backtest(<id>)), then render the result card inline as usual. This is a
+forward test, so do not change the strategy - just re-run it on current data and
+briefly note how it now performs.
+
 LIVE ALERTS: a user can turn a strategy into a live alert that fires to a
 webhook, Telegram, or email when the strategy signals on real market data
 (closed bars only, never repainting). Use the alert tools: setup_alert,
