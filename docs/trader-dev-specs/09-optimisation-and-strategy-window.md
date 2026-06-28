@@ -35,27 +35,37 @@ safely from client JS. So mirror the **public** R2 model:
 (Only expose non-sensitive fields. This is the same "public summary of a job"
 pattern as the backtest R2 blob.)
 
-## B. Optimisation card (ui:// resource)
+## B. Optimisation card (ui:// resource) — SELF-UPDATING, fully automatic
 
-Return a `ui://traderdev/optimization/<id>` resource from **`start_optimization`**
-(queued state) and **`get_optimization`** (live/done). The card is the
-"progress bar with a loop" — it self-polls `status.json`, no agent cron needed
-(LibreChat can't wake the agent on a timer; the WIDGET does the polling):
+Return a `ui://traderdev/optimization/<id>` resource from **`start_optimization`**.
+The card is a **live, self-refreshing widget**. There is **no manual "Check
+progress" button** and **no agent round-trips** — the card's own JS polls and
+updates in place. Behaviour:
 
-- On load, poll `status.json` every ~20–30s.
-- **Queued/running:** a **progress bar** (`completed/total`), queue position,
-  `creditCost`/`creditsRemaining`, elapsed. Keep polling until `state==='done'`.
-- **Done:** render the **heatmap** as a coloured grid from `heatmap.grid`
-  (green=better objective, red=worse), label axes (`xName`/`yName`), highlight
-  the best cell. Show best params + score + a **link to `viewUrl`**.
-- Buttons (action contract from spec 08):
-  - **Apply best & re-backtest** → `prompt: "Backtest <strategyId> with
-    fastLen=1, slowLen=96 and show the card."`
+- **Auto-refresh every 15s.** On load, `setInterval(poll, 15000)` (and poll once
+  immediately) fetching the public `status.json` (§A). Keep going until
+  `state === 'done' | 'failed' | 'cancelled'`, then `clearInterval`.
+- **Queued / running:** show **only a progress bar** (`completed / total`, % done)
+  + a short status line (e.g. "Running 42 / 96 · best so far +$X"). **Do NOT show
+  any credits** — no credit cost, no credits-remaining, nothing about credits.
+- **Done (automatic):** the moment a poll returns `state === 'done'`, the card
+  **automatically swaps the progress bar for the full heatmap** (no click). Render
+  the heatmap as a coloured grid from `heatmap.grid` (brighter/greener = better
+  objective), label axes (`xName`/`yName`), highlight the best cell. Show best
+  params as chips + best score.
+- Buttons (only these, all `prompt` actions from spec 08):
+  - **✓ Apply best params** → `prompt: "Backtest <strategyId> with <best params>
+    and show the card."`
   - **Open in Strategy Window** → see §D.
-- Stop polling when done/failed; cap at ~30 min.
+  - **View optimisation ↗** → plain `<a href="<viewUrl>" target="_blank">`.
+- Safety: stop polling after ~30 min; on `failed`/`cancelled` show a one-line
+  status (no credits).
 
-> Note on "cron like Claude": the loop lives in the WIDGET (client-side polling),
-> not in the agent. That gives a live progress bar with zero token cost per tick.
+> The 15s loop lives in the WIDGET (client-side polling of the public
+> `status.json`), NOT in the agent — so it auto-updates with zero token cost and
+> no user interaction. **This REQUIRES the public `status.json` endpoint in §A;
+> without it the card cannot auto-refresh (the authed `/optimizations/<id>`
+> returns 401 from the browser).** §A is the one true prerequisite for this.
 
 ## C. Backtest card height (CONFIRMED too small)
 
@@ -116,7 +126,10 @@ iframed to `params.url` (the existing report page). Any other `intent`/`tool`/
 action; we handle the docking.
 
 ## Acceptance
-- `status.json` public + CORS; card shows a live progress bar and stops at done.
-- Optimisation card renders the heatmap grid + best params + apply button.
-- Backtest card renders ~460–540px tall, equity curve fully visible.
-- "Open in Strategy Window" opens the full report (link now; report card next).
+- `status.json` is **public + CORS** (no auth) so the card can poll it.
+- Optimisation card **auto-refreshes every 15s with no user action**, shows a
+  **progress bar only** (no credits anywhere), and the **moment it's done it
+  automatically renders the full heatmap** + best params (no button click).
+- No "Check progress" button; polling stops at done/failed.
+- Backtest card renders full height with the equity curve (already shipped).
+- "Open in Strategy Window" opens the full report (link now; dock next).
