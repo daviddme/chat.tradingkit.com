@@ -2,5 +2,82 @@
 # Loaded by the Railway LibreChat service via CONFIG_PATH (raw GitHub URL).
 # Schema version matches the running image (verified against upstream 2026-06-28).
 # Edit -> push to main -> redeploy the LibreChat service on Railway.
+#
+# No secrets live in this file: provider keys are Railway env; the Trader.dev
+# key is supplied per-user via customUserVars (TRADERDEV_API_KEY).
+
 version: 1.3.11
 cache: true
+
+interface:
+  customWelcome: |
+    Welcome to Trader.dev Strategy Lab. Describe a trading idea in plain English
+    and I will write the strategy, backtest it, and show you the results.
+
+    First time here? Open the tools / MCP settings, choose trader-dev, and paste
+    your pk_ API key from https://mcp-api.trader.dev/login so I can run backtests
+    on your account. Then try one of the suggested prompts below.
+
+# ---------------------------------------------------------------------------
+# Trader.dev MCP server.
+#
+# Native SSE transport: LibreChat connects directly to the MCP SSE endpoint and
+# forwards a static per-user Bearer token. This is the same connection the
+# Claude Code `trader-dev` client makes; Claude wraps it in `mcp-remote` only
+# because Claude needs a stdio<->remote bridge, which LibreChat does not.
+# A ready-to-flip mcp-remote stdio fallback lives in Dockerfile +
+# docs/mcp-remote-fallback.md if the native path ever misbehaves.
+# ---------------------------------------------------------------------------
+mcpServers:
+  trader-dev:
+    type: sse
+    url: "https://mcp.trader.dev/sse"
+    initTimeout: 60000
+    timeout: 180000
+    headers:
+      Authorization: "Bearer {{TRADERDEV_API_KEY}}"
+    customUserVars:
+      TRADERDEV_API_KEY:
+        title: "Trader.dev API Key"
+        description: "<b>Temporary setup step.</b> Soon Trader.dev will generate and connect your key automatically. For now, paste it here manually. Get your pk_ key from <a href='https://mcp-api.trader.dev/login' target='_blank'>trader.dev API Keys</a>. It stays private to your account."
+    serverInstructions: |
+      You help users backtest trading strategies in plain English via the
+      Trader.dev tools. Translate the idea into a Pine v5 strategy, call
+      quick_backtest(pineSource, symbol, timeframe), then render the result
+      inline (an HTML artifact charting the equity curve from the public R2
+      blob; also embed the card.svg image if it loads). Give a 1-2 line
+      plain-English read. Pine rules for this engine: start with
+      strategy(..., default_qty_type=strategy.percent_of_equity,
+      commission_type=strategy.commission.percent, commission_value=0.06);
+      declare tunable inputs with minval/maxval/step; use reversal entries for
+      round trips; NEVER use strategy.exit(stop=, limit=) (it silently breaks
+      entries) - use opposite-signal exits or strategy.close. On 402/429 errors
+      relay the friendly message and upgradeUrl. Be concise, no hype.
+    chatMenu: true
+    startup: false
+
+endpoints:
+  agents:
+    recursionLimit: 25
+    maxRecursionLimit: 50
+    capabilities:
+      - "tools"
+      - "actions"
+      - "artifacts"
+      - "ocr"
+      - "chain"
+      - "file_search"
+
+# Pin the Strategy Lab agent as the default selectable spec so new chats land on
+# it. agent_id is filled in once the agent is seeded (Task 4 -> Task 5).
+modelSpecs:
+  enforce: false
+  prioritize: true
+  list:
+    - name: "strategy-lab"
+      label: "Trader.dev Strategy Lab"
+      default: true
+      description: "Backtest and optimise trading strategies in plain English."
+      preset:
+        endpoint: "agents"
+        agent_id: "REPLACE_IN_TASK_5"
