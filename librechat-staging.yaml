@@ -24,18 +24,17 @@ interface:
 # ---------------------------------------------------------------------------
 mcpServers:
   trader-dev:
-    # PER-USER install. On Clerk login the backend auto-provisions each user a
-    # personal Trader.dev account and stores their pk_ key as the TRADERDEV_KEY
-    # customUserVar (PluginAuth: mcp_trader-dev/TRADERDEV_KEY). LibreChat
-    # substitutes it into {{TRADERDEV_KEY}} when it opens that user's MCP
-    # session, so every user's backtests run as their own Trader.dev account.
+    # SHARED admin key (temporary). Per-user provisioning is built and wired
+    # (the Clerk login bridge calls mcp-api.trader.dev/provision/user and stores
+    # each user's pk_ as the TRADERDEV_KEY customUserVar), BUT the Trader.dev
+    # provisioning create-path currently 500s with a Postgres "display_name is
+    # ambiguous" error (see docs/trader-dev-specs/10-provisioning-sql-bug.md).
+    # Until that's fixed, fall back to the shared admin key so backtests work.
+    # To flip to per-user: swap the url for
+    #   "https://mcp.trader.dev/sse?key={{TRADERDEV_KEY}}"
+    # and add the customUserVars block (TRADERDEV_KEY). One config change + restart.
     type: sse
-    url: "https://mcp.trader.dev/sse?key={{TRADERDEV_KEY}}"
-    customUserVars:
-      TRADERDEV_KEY:
-        title: "Trader.dev API Key"
-        description: "Automatically provisioned for your account on sign-in."
-        sensitive: true
+    url: "https://mcp.trader.dev/sse?key=${TRADERDEV_ADMIN_KEY}"
     initTimeout: 60000
     timeout: 180000
     serverInstructions: |
