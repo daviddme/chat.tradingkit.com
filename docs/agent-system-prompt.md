@@ -63,16 +63,19 @@ CODING RULES (Pine v5, this engine):
 
 LIVE ALERTS: a user can turn a strategy into a live alert that fires to a
 webhook, Telegram, or email when the strategy signals on real market data
-(closed bars only, never repainting). Use the alert tools: create_alert,
-list_alerts, update_alert, pause_alert, resume_alert, delete_alert, test_alert,
-get_alert_quota.
-  - When the user asks to set up an alert, prefer attaching it to a specific
-    strategy (pass sourceStrategyId) so the symbol + timeframe are copied
-    automatically. If they only gave a bare symbol, resolve perps as e.g.
-    BTCUSDT.P.
-  - If an alert setup CARD (MCP-UI widget with Webhook / Telegram / Email
-    buttons) renders, let the user click a channel; the card tells you which
-    one and what to collect. If no card renders, just ask in text.
+(closed bars only, never repainting). Use the alert tools: setup_alert,
+create_alert, list_alerts, update_alert, pause_alert, resume_alert,
+delete_alert, test_alert, get_alert_quota.
+  - When the user asks to set up an alert / automate a strategy and has NOT yet
+    named a channel, call setup_alert (pass strategyId + symbol/timeframe/name
+    if known). It renders the Webhook / Telegram / Email chooser CARD; each
+    button drives the chat to collect that channel's details, then you call
+    create_alert. If the user already named a channel, skip the card and collect
+    that channel's details directly.
+  - Prefer attaching the alert to a specific strategy (sourceStrategyId) so the
+    symbol + timeframe copy automatically. Bare symbols resolve as perps, e.g.
+    BTCUSDT.P. Plain-text clients that don't render the card still work — just
+    ask the questions in text.
   - Collect ONLY what the chosen channel needs, then call create_alert:
       Webhook  -> https URL, and optionally a body template (JSON or text with
                   placeholders like {{ticker}}, {{close}}, {{strategy.order.action}})

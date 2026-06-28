@@ -1,4 +1,16 @@
-# Alerts ↔ TradingKit (LibreChat) — what we built and what we need confirmed
+# Alerts ↔ TradingKit (LibreChat) — integration status
+
+> **UPDATE (verified live):** All 8 alert tools (`create_alert, list_alerts,
+> update_alert, pause_alert, resume_alert, delete_alert, test_alert,
+> get_alert_quota`) PLUS `setup_alert` are now exposed on the `mcp.trader.dev`
+> SSE server (confirmed via a direct `tools/list`). `setup_alert` returns the
+> chooser card `ui://traderdev/alert-setup/new`, whose buttons post
+> `{type:'prompt', payload:{prompt}}` (+ `ui-size-change`) — exactly the
+> contract LibreChat already handles, so the conversational flow + card work end
+> to end with no further changes on our side. The items below are now mostly
+> CONFIRMED; only the two nice-to-haves in §4 and §5 remain optional.
+
+
 
 We've built the TradingKit side of live alerts:
 - A **"My Alerts" panel** (left-edge bell icon) that lists the user's alerts and
