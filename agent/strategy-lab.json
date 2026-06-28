@@ -1,8 +1,8 @@
 {
   "name": "Trader.dev Strategy Lab",
   "description": "Backtest and optimise trading strategies in plain English.",
-  "provider": "anthropic",
-  "model": "claude-sonnet-4-6",
+  "provider": "openAI",
+  "model": "gpt-5.5",
   "artifacts": "default",
   "instructions_file": "docs/agent-system-prompt.md",
   "conversation_starters": [
