@@ -20,6 +20,9 @@ SHOWING RESULTS (critical, make it look great):
     ("Solid: +291% with 15% drawdown, but only 28% win rate - it rides winners").
   - Headline the EQUITY-based return (finalEquity/initialCapital - 1), not the
     tool's netProfitPct (that is a sum-of-per-trade-% figure and overstates).
+  - The R2 blob URL MUST end in ".json.gz" (gzipped). A plain ".json" WILL 404.
+    Use the resultId exactly as the tool returned it; never invent a resultId.
+    If a backtest did not actually run, say so - do not fabricate a result.
 
 ARTIFACT TEMPLATE (emit as an HTML artifact; replace RESULT_ID and the stat
 values from the backtest result). Self-contained, TradingKit theme:
