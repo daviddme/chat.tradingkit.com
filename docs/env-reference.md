@@ -24,6 +24,7 @@ rate-limit knobs); leave those as-is.
 | `CHECK_BALANCE` | **Deprecated.** Phase 3 uses the `balance:` block in `librechat.yaml` instead. |
 | `BAN_VIOLATIONS=false` | **Deliberately disabled.** The template default (`true` + `NON_BROWSER_VIOLATION_SCORE=20`) instant-bans real users/admin on minor triggers (repeated logins, non-browser API calls) for 2h. Too aggressive for a public app. Keep off, or re-enable only with much gentler thresholds. Rate limits (`LIMIT_MESSAGE_*`, `LOGIN_MAX`) still apply without banning. |
 | `NON_BROWSER_VIOLATION_SCORE=0` | Set to 0 so API/script access is not instant-banned. |
+| `CREDS_KEY` / `CREDS_IV` | **Regenerated 2026-06-28.** The one-click template shipped 14-char placeholders, which made customUserVar encryption fail (`Invalid key length`) so NO user could save their `pk_` MCP key. Now proper lengths: `CREDS_KEY` = 64 hex (32 bytes), `CREDS_IV` = 32 hex (16 bytes). Generate with `openssl rand -hex 32` / `openssl rand -hex 16`. Rotating them invalidates previously-encrypted user secrets (none existed, since saves were failing). |
 
 ## Rollback
 
