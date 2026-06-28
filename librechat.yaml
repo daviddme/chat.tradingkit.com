@@ -80,10 +80,14 @@ modelSpecs:
 # with per-model rates). This is the Free-tier engine; Pro / Pro Plus grants and
 # billing top-ups get wired via a webhook later (see docs/phase3-credits-tiers.md).
 # Generous starting + weekly refill for now so nobody is stranded pre-billing.
+# Credit metering is OFF for now so nobody (esp. admin) is blocked during the
+# build phase. True "admin unlimited + users metered" needs a per-role exemption,
+# which we wire in the LibreChat fork (admins skip the balance check). When we
+# re-enable, these generous defaults apply to new users.
 balance:
-  enabled: true
-  startBalance: 2000000
+  enabled: false
+  startBalance: 100000000
   autoRefillEnabled: true
-  refillIntervalValue: 7
+  refillIntervalValue: 1
   refillIntervalUnit: "days"
-  refillAmount: 2000000
+  refillAmount: 100000000
