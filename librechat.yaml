@@ -10,13 +10,7 @@ version: 1.3.11
 cache: true
 
 interface:
-  customWelcome: |
-    Welcome to Trader.dev Strategy Lab. Describe a trading idea in plain English
-    and I will write the strategy, backtest it, and show you the results.
-
-    First time here? Open the tools / MCP settings, choose trader-dev, and paste
-    your pk_ API key from https://mcp-api.trader.dev/login so I can run backtests
-    on your account. Then try one of the suggested prompts below.
+  customWelcome: "Hi, welcome to TradingKit. Describe a trading idea in plain English and I'll build it, backtest it, and chart the results."
 
 # ---------------------------------------------------------------------------
 # Trader.dev MCP server.
