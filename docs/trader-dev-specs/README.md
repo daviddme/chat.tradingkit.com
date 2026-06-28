@@ -22,6 +22,9 @@ Each file is a self-contained spec. Priority order:
 6. [`07-mcp-ui-widget.md`](07-mcp-ui-widget.md) — return the backtest card as an
    MCP-UI resource so it renders in Claude / ChatGPT / LibreChat from one
    server-side build (answers "show the widget in Claude too").
+7. [`08-mcp-ui-cards.md`](08-mcp-ui-cards.md) — the interactive inline-card
+   catalogue + the LibreChat action contract (how Re-backtest / Optimise buttons
+   work) + the card height fix. **This is the active build for the chat UI.**
 
 ## Current integration (context for the dev)
 
