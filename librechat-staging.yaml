@@ -63,7 +63,11 @@ mcpServers:
       round trips; NEVER use strategy.exit(stop=, limit=) (it silently breaks
       entries) - use opposite-signal exits or strategy.close. On 402/429 errors
       relay the friendly message and upgradeUrl. Be concise, no hype.
-    chatMenu: true
+    # chatMenu:false = hidden from the user MCP dropdown so users can't toggle it
+    # off. Tools stay always-on via the agents' tools arrays (not gated by the
+    # dropdown), so every user always has it; the per-user connection auto-
+    # establishes on first use (key provisioned at login).
+    chatMenu: false
     startup: true
 
   # TradingKit Market feed: read-only market data, KEYLESS + public, global to
@@ -76,7 +80,7 @@ mcpServers:
     type: streamable-http
     url: "https://tradingkit-market-production.up.railway.app/mcp"
     startup: true
-    chatMenu: true
+    chatMenu: false
     initTimeout: 60000
     timeout: 120000
     serverInstructions: |
