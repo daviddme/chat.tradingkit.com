@@ -70,8 +70,11 @@ mcpServers:
   # every user (like trader-dev but no per-user provisioning). The upstream data
   # provider is confidential - refer to it only as the TradingKit market feed.
   tradingkit-market:
-    type: sse
-    url: "https://tradingkit-market-production.up.railway.app/sse"
+    # Stateless streamable-http (not SSE): the SSE transport flapped on the market
+    # container's cold start and tools failed to register. streamable-http has no
+    # persistent stream, so tool discovery is reliable at boot.
+    type: streamable-http
+    url: "https://tradingkit-market-production.up.railway.app/mcp"
     startup: true
     chatMenu: true
     initTimeout: 60000
