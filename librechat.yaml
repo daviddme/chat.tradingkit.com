@@ -128,12 +128,13 @@ modelSpecs:
 # with per-model rates). This is the Free-tier engine; Pro / Pro Plus grants and
 # billing top-ups get wired via a webhook later (see docs/phase3-credits-tiers.md).
 # Generous starting + weekly refill for now so nobody is stranded pre-billing.
-# Credit metering is OFF for now so nobody (esp. admin) is blocked during the
-# build phase. True "admin unlimited + users metered" needs a per-role exemption,
-# which we wire in the LibreChat fork (admins skip the balance check). When we
-# re-enable, these generous defaults apply to new users.
+# Credit metering is ON: it powers the UNIFIED credit display. The fork's
+# /api/balance override replaces the shown number with each member's live
+# Trader.dev credit balance (what their backtests spend). Admins + hi@davidd.tech
+# are exempt (unlimited) via the fork. Rails are generous (tier grants 2M..1B via
+# syncTierCredits) so normal chat never blocks; only the Trader.dev number shows.
 balance:
-  enabled: false
+  enabled: true
   startBalance: 100000000
   autoRefillEnabled: true
   refillIntervalValue: 1
